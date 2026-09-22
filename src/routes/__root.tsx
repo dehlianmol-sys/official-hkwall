@@ -14,6 +14,7 @@ import { StoreProvider } from '@/lib/store';
 import { ToastProvider } from "../lib/toast";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { captureRefFromUrl } from "../lib/referral";
+import { openExternalUrl } from "../lib/nativeBridge";
 
 /**
  * Any unknown URL (old website links, /register variants, typos) goes straight
@@ -129,6 +130,31 @@ function RootComponent() {
       captureRefFromUrl();
     });
   }, [router]);
+
+  // App-wide safety net: ANY link that points outside this site is handed to
+  // the real browser (Chrome on Android) instead of opening a tab inside the
+  // wrapper app, which used to relaunch the app when the user pressed back.
+  useEffect(() => {
+    const onDocumentClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey) return;
+      const anchor = (event.target as HTMLElement | null)?.closest?.('a');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href') || '';
+      if (!href || href.startsWith('#')) return;
+      if (anchor.hasAttribute('download')) return;
+      let external = false;
+      try {
+        external = new URL(href, window.location.href).origin !== window.location.origin;
+      } catch {
+        return;
+      }
+      if (!external) return;
+      event.preventDefault();
+      openExternalUrl(anchor.href);
+    };
+    document.addEventListener('click', onDocumentClick, true);
+    return () => document.removeEventListener('click', onDocumentClick, true);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
