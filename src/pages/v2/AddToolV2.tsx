@@ -69,6 +69,14 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     return () => window.clearInterval(interval);
   }, [download]);
 
+  // Agar user 3s wale timer ke baad bhi button na dabaye, 5 second me tutorial
+  // khud khul jata hai taaki use samajh aa jaye kya karna hai.
+  useEffect(() => {
+    if (download !== 'running' || redirectSeconds > 0 || tutorialOpen || installed) return;
+    const timer = window.setTimeout(() => setTutorialOpen(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [download, redirectSeconds, tutorialOpen, installed]);
+
   useEffect(() => {
     const isAdding = phase !== 'gate' && phase !== 'empty' && phase !== 'loading';
     document.body.classList.toggle('wallet-add-flow-active', isAdding);
