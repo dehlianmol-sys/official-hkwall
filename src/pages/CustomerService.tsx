@@ -1,6 +1,7 @@
 import { useNavigate } from '@/lib/router-compat';
 import { useStore } from '@/lib/store';
 import SmartImage from '../components/SmartImage';
+import { openExternalUrl } from '@/lib/nativeBridge';
 import { css } from './v2/css/ServiceRef';
 
 const DEFAULT_SERVICES = [

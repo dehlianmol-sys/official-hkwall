@@ -19,7 +19,7 @@ import GuidedInstallModal from '@/components/v2/GuidedInstallModal';
 import { useWalletPin } from '@/lib/pin';
 import { getAppInstall, markDownloaded, markInstalled } from '@/lib/appInstalls';
 import { useBanners } from '@/lib/v2data';
-import { openInExternalChrome } from '@/lib/nativeBridge';
+import { openInExternalChrome, openExternalUrl } from '@/lib/nativeBridge';
 
 type Phase = 'gate' | 'empty' | 'loading' | 'choose' | 'setup' | 'phone' | 'upi';
 
