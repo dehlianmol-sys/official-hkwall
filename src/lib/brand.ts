@@ -5,7 +5,7 @@
  * the `logos` storage bucket, file `Vivrapaylogo.png`.
  * Replace that file in storage and it updates everywhere (admin + user side).
  */
-import { getApkUrl, getLogoUrl } from './storage';
+import { getLogoUrl } from './storage';
 
 export const APP_NAME = 'Hkwallet';
 export const APP_TAGLINE = 'Earn Money Online';
