@@ -13,7 +13,7 @@ export default function Banners() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [bannerType, setBannerType] = useState<'normal' | 'notice' | 'tutorial'>('normal');
+  const [bannerType, setBannerType] = useState<'normal' | 'notice' | 'tutorial' | 'submit_tutorial'>('normal');
   const [title, setTitle] = useState('');
   const [noticeText, setNoticeText] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -51,12 +51,18 @@ export default function Banners() {
     setSaving(true);
     try {
       const path = await uploadImage(selectedFile, 'banners');
+      const isSubmitTutorial = bannerType === 'submit_tutorial';
       const tutorialOrders = banners
-        .filter((banner) => banner.bannerType === 'tutorial')
+        .filter((banner) => banner.bannerType === 'tutorial' && (banner.title === '__submit_tutorial__') === isSubmitTutorial)
         .map((banner) => banner.sortOrder);
       const nextTutorialOrder = tutorialOrders.length ? Math.max(...tutorialOrders) + 1 : 0;
-      await addBanner(path, { bannerType, title: title.trim(), noticeText: noticeText.trim(), sortOrder: nextTutorialOrder });
-      toast(bannerType === 'notice' ? 'Notice banner added' : bannerType === 'tutorial' ? 'Tutorial step added' : 'Banner added', 'success');
+      await addBanner(path, {
+        bannerType: isSubmitTutorial ? 'tutorial' : bannerType,
+        title: isSubmitTutorial ? '__submit_tutorial__' : title.trim(),
+        noticeText: noticeText.trim(),
+        sortOrder: nextTutorialOrder,
+      });
+      toast(bannerType === 'notice' ? 'Notice banner added' : isSubmitTutorial ? 'Submit tutorial step added' : bannerType === 'tutorial' ? 'Tutorial step added' : 'Banner added', 'success');
       setShowForm(false);
     } catch {
       toast('Upload failed. Please try again.', 'error');
@@ -107,7 +113,7 @@ export default function Banners() {
               />
               <div className="flex items-center justify-between gap-2 mt-2">
                 <span className="text-xs font-medium text-slate-600">
-                  {b.bannerType === 'normal' ? 'Home banner' : b.bannerType === 'notice' ? 'Daily notice' : `Tutorial step ${b.sortOrder + 1}`}
+                  {b.bannerType === 'normal' ? 'Home banner' : b.bannerType === 'notice' ? 'Daily notice' : b.title === '__submit_tutorial__' ? `Submit tutorial step ${b.sortOrder + 1}` : `Tutorial step ${b.sortOrder + 1}`}
                 </span>
               </div>
               <div className="flex gap-2 mt-2">
@@ -150,8 +156,8 @@ export default function Banners() {
 
             <div className="mt-4">
               <p className="text-sm font-medium text-slate-700 mb-2">Banner type</p>
-               <div className="grid grid-cols-3 gap-2">
-                 {(['normal', 'notice', 'tutorial'] as const).map((t) => (
+                <div className="grid grid-cols-2 gap-2">
+                 {(['normal', 'notice', 'tutorial', 'submit_tutorial'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -162,7 +168,7 @@ export default function Banners() {
                         : 'border-slate-200 text-slate-600'
                     }`}
                   >
-                     {t === 'normal' ? 'Home' : t === 'notice' ? 'Daily notice' : 'Tutorial'}
+                     {t === 'normal' ? 'Home' : t === 'notice' ? 'Daily notice' : t === 'submit_tutorial' ? 'Submit tutorial' : 'Download tutorial'}
                   </button>
                 ))}
               </div>
@@ -191,6 +197,11 @@ export default function Banners() {
              {bannerType === 'tutorial' && (
                <p className="mt-3 text-xs text-slate-400">
                  This screenshot will be added as the next step in the common wallet-install tutorial.
+               </p>
+             )}
+             {bannerType === 'submit_tutorial' && (
+               <p className="mt-3 text-xs text-slate-400">
+                 This screenshot appears after Setup Submit and before phone-number entry.
                </p>
              )}
             <div className="flex gap-2 mt-4">

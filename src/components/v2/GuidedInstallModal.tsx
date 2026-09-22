@@ -7,11 +7,25 @@ interface GuidedInstallModalProps {
   open: boolean;
   appName: string;
   slides: HomeBanner[];
+  title?: string;
+  emptyTitle?: string;
+  emptyText?: string;
+  confirmLabel?: string;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export default function GuidedInstallModal({ open, appName, slides, onClose, onConfirm }: GuidedInstallModalProps) {
+export default function GuidedInstallModal({
+  open,
+  appName,
+  slides,
+  title = 'Open Chrome Browser',
+  emptyTitle = 'Continue in Chrome',
+  emptyText,
+  confirmLabel = 'Confirm & Open Chrome',
+  onClose,
+  onConfirm,
+}: GuidedInstallModalProps) {
   const [index, setIndex] = useState(0);
   const [seconds, setSeconds] = useState(3);
 
@@ -59,7 +73,7 @@ export default function GuidedInstallModal({ open, appName, slides, onClose, onC
             <X size={21} />
           </button>
           <div>
-            <h2 id="tutorial-title">Open Chrome Browser</h2>
+            <h2 id="tutorial-title">{title}</h2>
             <p>{hasSlides ? `Step ${index + 1} of ${slides.length}` : `${appName} download`}</p>
           </div>
           <span className="tutorial-header-spacer" aria-hidden="true" />
@@ -70,8 +84,8 @@ export default function GuidedInstallModal({ open, appName, slides, onClose, onC
             <img src={current.imageUrl} alt={`Tutorial step ${index + 1}`} className="tutorial-image" />
           ) : (
             <div className="tutorial-empty">
-              <strong>Continue in Chrome</strong>
-              <span>Chrome will open the {appName} APK download.</span>
+              <strong>{emptyTitle}</strong>
+              <span>{emptyText ?? `Chrome will open the ${appName} APK download.`}</span>
             </div>
           )}
         </div>
@@ -102,7 +116,7 @@ export default function GuidedInstallModal({ open, appName, slides, onClose, onC
               else setIndex((value) => value + 1);
             }}
           >
-            {seconds > 0 ? `${lastSlide ? 'Confirm' : 'Next'} (${seconds}s)` : lastSlide ? 'Confirm & Open Chrome' : 'Next'}
+            {seconds > 0 ? `${lastSlide ? 'Confirm' : 'Next'} (${seconds}s)` : lastSlide ? confirmLabel : 'Next'}
             {seconds === 0 && !lastSlide && <ChevronRight size={18} />}
           </button>
         </footer>

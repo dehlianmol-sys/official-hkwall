@@ -33,7 +33,7 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
   const navigate = useNavigate();
 
   const { pin: walletPin, loading: pinLoading } = useWalletPin(currentUser?.id);
-  const { tutorial: tutorialSlides } = useBanners();
+  const { tutorial: tutorialSlides, submitTutorial: submitTutorialSlides } = useBanners();
   const [pinGate, setPinGate] = useState(false);
   const afterPin = useRef<(() => void) | null>(null);
 
@@ -46,7 +46,7 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
   const [download, setDownload] = useState<'idle' | 'running' | 'done'>('idle');
   const [installed, setInstalled] = useState(false);
   const [redirectSeconds, setRedirectSeconds] = useState(3);
-  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [tutorialMode, setTutorialMode] = useState<'install' | 'submit' | null>(null);
 
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -69,13 +69,11 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     return () => window.clearInterval(interval);
   }, [download]);
 
-  // Agar user 3s wale timer ke baad bhi button na dabaye, 5 second me tutorial
-  // khud khul jata hai taaki use samajh aa jaye kya karna hai.
+  // The tutorial opens as soon as the three-second Chrome countdown completes.
   useEffect(() => {
-    if (download !== 'running' || redirectSeconds > 0 || tutorialOpen || installed) return;
-    const timer = window.setTimeout(() => setTutorialOpen(true), 5000);
-    return () => window.clearTimeout(timer);
-  }, [download, redirectSeconds, tutorialOpen, installed]);
+    if (download !== 'running' || redirectSeconds > 0 || tutorialMode || installed) return;
+    setTutorialMode('install');
+  }, [download, redirectSeconds, tutorialMode, installed]);
 
   useEffect(() => {
     const isAdding = phase !== 'gate' && phase !== 'empty' && phase !== 'loading';
@@ -118,7 +116,7 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
   const openSetup = (picked: WalletTool) => {
     setDownload('idle');
     setRedirectSeconds(3);
-    setTutorialOpen(false);
+    setTutorialMode(null);
     setInstalled(false);
     setPhase('setup');
     // Apps with no APK (IndusPay) are never download-gated.
@@ -162,14 +160,14 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
 
   const openInstallTutorial = () => {
     if (redirectSeconds > 0) return;
-    setTutorialOpen(true);
+    setTutorialMode('install');
   };
 
   // Confirm starts the release asset directly. Do not send the user to a
   // GitHub release page or to Chrome's internal Downloads activity.
   const confirmChromeDownload = () => {
     if (!tool?.apkUrl) return;
-    setTutorialOpen(false);
+    setTutorialMode(null);
     setDownload('done');
     setInstalled(true);
     if (currentUser?.id) {
@@ -201,6 +199,11 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
       toast(`Please download the ${tool.name} app and login with your phone number.`, 'info');
       return;
     }
+    setTutorialMode('submit');
+  };
+
+  const continueToPhone = () => {
+    setTutorialMode(null);
     setPhone('');
     setPhoneError(null);
     setPhase('phone');
@@ -271,11 +274,15 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
       )}
 
       <GuidedInstallModal
-        open={tutorialOpen}
+        open={tutorialMode !== null}
         appName={tool?.name ?? 'Wallet app'}
-        slides={tutorialSlides}
-        onClose={() => setTutorialOpen(false)}
-        onConfirm={confirmChromeDownload}
+        slides={tutorialMode === 'submit' ? submitTutorialSlides : tutorialSlides}
+        title={tutorialMode === 'submit' ? 'Submit Tutorial' : 'Open Chrome Browser'}
+        emptyTitle={tutorialMode === 'submit' ? 'Continue wallet setup' : undefined}
+        emptyText={tutorialMode === 'submit' ? 'Confirm to enter your wallet phone number.' : undefined}
+        confirmLabel={tutorialMode === 'submit' ? 'Confirm & Continue' : undefined}
+        onClose={() => setTutorialMode(null)}
+        onConfirm={tutorialMode === 'submit' ? continueToPhone : confirmChromeDownload}
       />
 
 
@@ -393,17 +400,8 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
                     <div>
                       <button
                         type="button"
-                        className="text-link"
+                        className="download-text-link"
                         onClick={startDownload}
-                        style={{
-                          border: 0,
-                          padding: '6px 14px',
-                          borderRadius: 999,
-                          background: '#0F8A5F',
-                          color: '#FFFFFF',
-                          fontWeight: 700,
-                          boxShadow: '0 4px 12px rgba(15,138,95,.28)',
-                        }}
                       >
                         {download === 'done' ? 'Re-download' : 'Download'}
                       </button>

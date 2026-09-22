@@ -152,6 +152,12 @@ export const css = `.tool-setup-scope {
       font-style: italic;
       text-decoration: underline;
       text-underline-offset: 2px;
+    }.tool-setup-scope .download-text-link {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--green-dark);
+      font-weight: 800;
     }.tool-setup-scope .teaching-link {
       display: inline-block;
       margin-top: 3px;
