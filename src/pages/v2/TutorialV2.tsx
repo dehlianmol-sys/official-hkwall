@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from '@/lib/router-compat';
 import { css } from './css/TutorialRef';
 import { TUTORIALS, type Tutorial } from '@/lib/tutorials';
+import { openExternalUrl } from '@/lib/nativeBridge';
 
 export default function TutorialV2() {
   const navigate = useNavigate();
