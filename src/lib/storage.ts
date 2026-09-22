@@ -79,3 +79,14 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
 export function fileToObjectUrl(file: File): string {
   return URL.createObjectURL(file);
 }
+
+/** Delete an uploaded image from the storage bucket (ignores external URLs). */
+export async function removeStoredImage(path: string): Promise<void> {
+  if (!path) return;
+  if (/^(https?:|data:|blob:)/.test(path)) return;
+  try {
+    await supabase.storage.from(BUCKET).remove([path]);
+  } catch {
+    // Storage cleanup must never block the database delete.
+  }
+}
