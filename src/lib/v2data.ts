@@ -43,7 +43,8 @@ export async function fetchBanners(): Promise<BannerData> {
   const rows = (data ?? []) as BannerRowAny[];
   const active = rows.filter((r) => r.is_active !== false);
   const isTutorial = (r: BannerRowAny) =>
-    r.banner_type === 'tutorial' || (r.banner_type === 'notice' && r.title === '__tutorial__');
+    r.banner_type === 'tutorial' ||
+    (r.banner_type === 'notice' && (r.title === '__tutorial__' || r.title === '__submit_tutorial__'));
   const isSubmitTutorial = (r: BannerRowAny) =>
     (r.banner_type === 'tutorial' || r.banner_type === 'notice') && r.title === '__submit_tutorial__';
   const normal = active
