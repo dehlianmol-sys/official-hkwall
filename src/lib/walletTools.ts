@@ -53,20 +53,20 @@ export const UNAVAILABLE_LABEL = 'Unavailable in service';
 export const WALLET_TOOLS: WalletTool[] = [
   {
     id: 'freecharge', category: 'personal', name: 'Freecharge', logoUrl: getLogoUrl('Freecharge.png'),
-    min: 200, max: 100000, payout: true, available: true, handles: ['@freecharge', '@fc'], apkUrl: releaseApkUrl('freecharge.apk'),
+    min: 200, max: 100000, payout: true, available: true, handles: ['@freecharge', '@fc'], apkUrl: APK_LINKS.freecharge,
   },
   {
     id: 'phonepe', category: 'personal', name: 'Phonepe', logoUrl: getLogoUrl('Phonepe.png'),
-    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: releaseApkUrl('phonepe.apk'),
+    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: APK_LINKS.phonepe,
   },
   {
     id: 'mobikwik', category: 'personal', name: 'Mobikwik', logoUrl: getLogoUrl('MobiKwik.jpg'),
-    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: releaseApkUrl('mobikwik.apk'),
+    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: APK_LINKS.mobikwik,
   },
   {
     id: 'paytm', category: 'personal', name: 'Paytm', logoUrl: getLogoUrl('Paytm.png'),
     min: 10, max: 100000, payout: true, available: true,
-    handles: ['@paytm', '@ptyes', '@ptaxis', '@ptsbi', '@pthdfc'], apkUrl: releaseApkUrl('paytm.apk'),
+    handles: ['@paytm', '@ptyes', '@ptaxis', '@ptsbi', '@pthdfc'], apkUrl: APK_LINKS.paytm,
   },
   {
     id: 'induspay', category: 'personal', name: 'IndusPay', logoUrl: getLogoUrl('Induspay.png'),
