@@ -391,7 +391,20 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
                 <li className="step">
                   {download !== 'running' && (
                     <div>
-                      <button type="button" className="text-link" onClick={startDownload} style={{ border: 0, background: 'transparent', padding: 0 }}>
+                      <button
+                        type="button"
+                        className="text-link"
+                        onClick={startDownload}
+                        style={{
+                          border: 0,
+                          padding: '6px 14px',
+                          borderRadius: 999,
+                          background: '#0F8A5F',
+                          color: '#FFFFFF',
+                          fontWeight: 700,
+                          boxShadow: '0 4px 12px rgba(15,138,95,.28)',
+                        }}
+                      >
                         {download === 'done' ? 'Re-download' : 'Download'}
                       </button>
                       <span> New {tool.name} in Hk Wallet</span>
