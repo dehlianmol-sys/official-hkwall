@@ -5,7 +5,7 @@
  * the `logos` storage bucket, file `Vivrapaylogo.png`.
  * Replace that file in storage and it updates everywhere (admin + user side).
  */
-import { getApkUrl, getLogoUrl } from './storage';
+import { getLogoUrl } from './storage';
 
 export const APP_NAME = 'Hkwallet';
 export const APP_TAGLINE = 'Earn Money Online';
@@ -22,11 +22,10 @@ export const DATABASE_APP_LOGO = databaseLogoUrl ? `${databaseLogoUrl}?v=2026092
 export const APP_LOGO = DATABASE_APP_LOGO || APP_LOGO_FALLBACK;
 
 /**
- * The signed main APK is served from the public `apks` Supabase Storage bucket
- * (file `hkwallet.apk`). Storage keeps big APKs out of the GitHub repo, where
- * the web upload limit is 25 MB. Falls back to the local public copy.
+ * The signed main APK ships with the site itself:
+ * `public/downloads/hkwallet.apk`. Yahi original placing hai — isse mat badlo.
  */
-export const APK_URL = getApkUrl('hkwallet.apk') || '/downloads/hkwallet.apk';
+export const APK_URL = '/downloads/hkwallet.apk';
 export const APK_FILENAME = 'hkwallet.apk';
 
 export const SITE_ORIGIN = 'https://hkwallet.online';
