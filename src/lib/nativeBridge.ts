@@ -196,6 +196,48 @@ export function openInExternalChrome(url: string): boolean {
   }
 }
 
+/**
+ * Single entry point for EVERY outside link in the app (support links, team
+ * share links, tutorials, APK downloads).
+ *
+ * Inside the Android wrapper app the WebView would otherwise open the link in
+ * an internal tab, and coming back re-launches the whole app. So there we hand
+ * the URL to the real Chrome app. In an ordinary browser we just open a new
+ * tab, which keeps the current app screen alive.
+ */
+export function openExternalUrl(rawUrl: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const trimmed = (rawUrl || '').trim();
+  if (!trimmed) return false;
+  const url = /^[a-z][a-z0-9+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+  const isHttp = /^https?:/i.test(url);
+  const isAndroid = /Android/i.test(window.navigator.userAgent);
+
+  // Non-web schemes (tg://, whatsapp://, mailto:) must go to the OS handler.
+  if (!isHttp) {
+    try {
+      window.location.href = url;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  if (isAndroid && isNativeApp()) {
+    if (openInExternalChrome(url)) return true;
+  }
+
+  const opened = window.open(url, '_blank', 'noopener,noreferrer');
+  if (opened) return true;
+  try {
+    window.location.href = url;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Human-readable report of what the wrapper app injects. Used by the debug button. */
 export function describeNativeBridges(): string {
   if (typeof window === 'undefined') return 'No window (server render).';
