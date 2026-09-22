@@ -1,6 +1,7 @@
 import { useNavigate } from '@/lib/router-compat';
 import { useStore } from '@/lib/store';
 import SmartImage from '../components/SmartImage';
+import { openExternalUrl } from '@/lib/nativeBridge';
 import { css } from './v2/css/ServiceRef';
 
 const DEFAULT_SERVICES = [
@@ -11,11 +12,7 @@ const DEFAULT_SERVICES = [
 ];
 
 /** Open a support link outside the app shell (works inside APK webviews too). */
-function openExternal(rawUrl: string) {
-  const url = /^[a-z][a-z0-9+.-]*:/i.test(rawUrl.trim()) ? rawUrl.trim() : `https://${rawUrl.trim()}`;
-  const opened = window.open(url, '_blank', 'noopener,noreferrer');
-  if (!opened) window.location.href = url;
-}
+const openExternal = (rawUrl: string) => { openExternalUrl(rawUrl); };
 
 function FallbackIcon({ name }: { name: string }) {
   const type = /whats/i.test(name) ? 'whatsapp' : /telegram/i.test(name) ? 'telegram' : 'headset';

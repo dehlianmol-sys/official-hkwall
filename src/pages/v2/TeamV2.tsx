@@ -5,6 +5,7 @@ import { useToast } from '@/lib/toast';
 import { getUserTeam, getTeamLevels, type TeamStats, type TeamLevels } from '@/lib/team';
 import { copyText, onClick, setText, wireBack, wireTabs } from '@/lib/v2dom';
 import TeamRef from './TeamRef';
+import { openExternalUrl } from '@/lib/nativeBridge';
 
 const EMPTY_STATS: TeamStats = {
   todayMembers: 0,
@@ -149,7 +150,7 @@ export default function TeamV2() {
         return;
       }
       const url = urls[target];
-      if (url) window.open(url, '_blank', 'noopener');
+      if (url) openExternalUrl(url);
     };
 
     const cleanups = [
