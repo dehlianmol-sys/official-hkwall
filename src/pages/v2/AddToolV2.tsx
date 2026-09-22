@@ -157,8 +157,8 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     setTutorialOpen(true);
   };
 
-  // Confirm = start the real file download straight away (no extra page), then
-  // move the user to Chrome's own Downloads screen where the progress shows.
+  // Confirm starts the release asset directly. Do not send the user to a
+  // GitHub release page or to Chrome's internal Downloads activity.
   const confirmChromeDownload = () => {
     if (!tool?.apkUrl) return;
     setTutorialOpen(false);
@@ -171,51 +171,18 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
 
     const apkUrl = tool.apkUrl;
     const fileName = `${tool.name.replace(/\s+/g, '-').toLowerCase()}.apk`;
-    const isAndroid = /Android/i.test(window.navigator.userAgent);
-
-    // Kick off the download itself. A normal anchor with `download` makes the
-    // browser (or the wrapper's download manager) fetch the file in the
-    // background instead of navigating to a release page.
-    const startFileDownload = () => {
-      try {
-        const link = document.createElement('a');
-        link.href = apkUrl;
-        link.download = fileName;
-        link.rel = 'noopener';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        return true;
-      } catch {
-        return false;
-      }
-    };
-
-    if (!isAndroid) {
-      if (!startFileDownload()) window.location.href = apkUrl;
-      return;
-    }
-
-    // Android: hand the direct file to Chrome so its download manager takes it
-    // (progress notification + "Install unknown apps" prompt).
     try {
-      const target = new URL(apkUrl);
-      const chromeIntent = `intent://${target.host}${target.pathname}${target.search}#Intent;scheme=${target.protocol.replace(':', '')};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(apkUrl)};end`;
-      window.location.href = chromeIntent;
+      const link = document.createElement('a');
+      link.href = apkUrl;
+      link.download = fileName;
+      link.rel = 'noopener';
+      link.target = '_self';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch {
-      startFileDownload();
+      toast(`Could not start the ${tool.name} download. Please try again.`, 'error');
     }
-
-    // Right after the download starts, open Chrome's Downloads screen so the
-    // user lands exactly where the progress is visible.
-    window.setTimeout(() => {
-      try {
-        window.location.href =
-          'intent:#Intent;action=android.intent.action.VIEW;package=com.android.chrome;component=com.android.chrome/org.chromium.chrome.browser.download.DownloadActivity;end';
-      } catch {
-        // If Chrome blocks it, the download notification still shows.
-      }
-    }, 1500);
   };
 
 

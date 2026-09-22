@@ -4,10 +4,8 @@
  * Only five personal payment apps are in service (Mobikwik, Phonepe, Paytm,
  * Freecharge, IndusPay). Every other entry stays visible but unavailable.
  *
- * `apkUrl` points at the public `apks` Supabase Storage bucket. Upload each APK
- * there with the exact file name (freecharge.apk, phonepe.apk, mobikwik.apk,
- * paytm.apk) and the Download button serves it — no repo push needed, and
- * Supabase allows files up to 50 MB (GitHub's web upload stops at 25 MB).
+ * `apkUrl` points at the APK files attached to the public GitHub release whose
+ * tag is `app.apk`. Asset names are lowercase and must match exactly.
  */
 import { getLogoUrl } from './storage';
 
@@ -15,7 +13,7 @@ import { getLogoUrl } from './storage';
  * APKs are served from the GitHub release "apk" (no 25 MB upload limit).
  * File names exactly as uploaded in that release.
  */
-const RELEASE_BASE = 'https://github.com/dehlianmol-sys/official-hkwallet.online/releases/download/apk';
+const RELEASE_BASE = 'https://github.com/dehlianmol-sys/official-hkwallet.online/releases/download/app.apk';
 export function releaseApkUrl(fileName: string): string {
   return `${RELEASE_BASE}/${fileName}`;
 }
@@ -54,11 +52,11 @@ export const WALLET_TOOLS: WalletTool[] = [
   },
   {
     id: 'phonepe', category: 'personal', name: 'Phonepe', logoUrl: getLogoUrl('Phonepe.png'),
-    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: releaseApkUrl('phonpe.apk'),
+    min: 100, max: 2000, available: true, handles: ['@ybl', '@ibl', '@axl'], apkUrl: releaseApkUrl('phonepe.apk'),
   },
   {
     id: 'mobikwik', category: 'personal', name: 'Mobikwik', logoUrl: getLogoUrl('MobiKwik.jpg'),
-    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: releaseApkUrl('mobikek.apk'),
+    min: 100, max: 100000, payout: true, available: true, handles: ['@mbkns', '@mbk', '@ikwik'], apkUrl: releaseApkUrl('mobikwik.apk'),
   },
   {
     id: 'paytm', category: 'personal', name: 'Paytm', logoUrl: getLogoUrl('Paytm.png'),
