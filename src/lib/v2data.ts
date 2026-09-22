@@ -45,7 +45,7 @@ export async function fetchBanners(): Promise<BannerData> {
   const isTutorial = (r: BannerRowAny) =>
     r.banner_type === 'tutorial' || (r.banner_type === 'notice' && r.title === '__tutorial__');
   const isSubmitTutorial = (r: BannerRowAny) =>
-    r.banner_type === 'tutorial' && r.title === '__submit_tutorial__';
+    (r.banner_type === 'tutorial' || r.banner_type === 'notice') && r.title === '__submit_tutorial__';
   const normal = active
     .filter((r) => (r.banner_type ?? 'normal') !== 'notice' && !isTutorial(r))
     .map((r) => ({ id: r.id, imageUrl: getPublicUrl(r.url) }));
