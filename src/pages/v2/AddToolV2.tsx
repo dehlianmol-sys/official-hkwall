@@ -178,16 +178,9 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     }
 
     const apkUrl = tool.apkUrl;
-    const fileName = `${tool.name.replace(/\s+/g, '-').toLowerCase()}.apk`;
     try {
-      const link = document.createElement('a');
-      link.href = apkUrl;
-      link.download = fileName;
-      link.rel = 'noopener';
-      link.target = '_self';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const opened = window.open(apkUrl, '_blank', 'noopener,noreferrer');
+      if (!opened) window.location.href = apkUrl;
     } catch {
       toast(`Could not start the ${tool.name} download. Please try again.`, 'error');
     }
