@@ -149,7 +149,7 @@ export default function TeamV2() {
         return;
       }
       const url = urls[target];
-      if (url) window.open(url, '_blank', 'noopener');
+      if (url) openExternalUrl(url);
     };
 
     const cleanups = [

@@ -190,7 +190,7 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
       toast('Teaching video will be added soon.', 'info');
       return;
     }
-    window.open(TEACHING_VIDEO_URL, '_blank', 'noopener');
+    openExternalUrl(TEACHING_VIDEO_URL);
   };
 
   const submitSetup = () => {
