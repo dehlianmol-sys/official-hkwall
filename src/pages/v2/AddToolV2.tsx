@@ -432,6 +432,11 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
                               type="button"
                               disabled={redirectSeconds > 0}
                               onClick={openInstallTutorial}
+                              style={
+                                redirectSeconds === 0
+                                  ? { animation: 'pulse 1.4s ease-in-out infinite', boxShadow: '0 0 0 4px rgba(15,138,95,.18)' }
+                                  : undefined
+                              }
                             >
                               {redirectSeconds > 0 ? `Open Chrome Browser (${redirectSeconds}s)` : 'Open Chrome Browser'}
                             </button>
