@@ -170,6 +170,32 @@ export function isNativeApp(): boolean {
   return /;\s*wv\)|WebToNative/i.test(window.navigator.userAgent);
 }
 
+/**
+ * Open an HTTPS URL in the installed Android Chrome app instead of allowing
+ * the current WebView to create an internal tab. Android's intent URI names
+ * Chrome explicitly; the fallback keeps the URL usable in ordinary browsers.
+ */
+export function openInExternalChrome(url: string): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const isAndroid = /Android/i.test(window.navigator.userAgent);
+  if (!isAndroid) {
+    window.location.assign(url);
+    return true;
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+    const destination = `${parsed.host}${parsed.pathname}${parsed.search}${parsed.hash}`;
+    const intentUrl = `intent://${destination}#Intent;scheme=${parsed.protocol.slice(0, -1)};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+    window.location.assign(intentUrl);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Human-readable report of what the wrapper app injects. Used by the debug button. */
 export function describeNativeBridges(): string {
   if (typeof window === 'undefined') return 'No window (server render).';

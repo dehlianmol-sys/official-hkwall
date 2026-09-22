@@ -19,6 +19,7 @@ import GuidedInstallModal from '@/components/v2/GuidedInstallModal';
 import { useWalletPin } from '@/lib/pin';
 import { getAppInstall, markDownloaded, markInstalled } from '@/lib/appInstalls';
 import { useBanners } from '@/lib/v2data';
+import { openInExternalChrome } from '@/lib/nativeBridge';
 
 type Phase = 'gate' | 'empty' | 'loading' | 'choose' | 'setup' | 'phone' | 'upi';
 
@@ -163,8 +164,8 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     setTutorialMode('install');
   };
 
-  // Confirm starts the release asset directly. Do not send the user to a
-  // GitHub release page or to Chrome's internal Downloads activity.
+  // Confirm hands the MediaFire URL to Android Chrome explicitly. A normal
+  // _blank link stays inside many WebView wrappers as an internal tab.
   const confirmChromeDownload = () => {
     if (!tool?.apkUrl) return;
     setTutorialMode(null);
@@ -175,12 +176,11 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
       void markInstalled(currentUser.id, tool.id).catch(() => undefined);
     }
 
-    const apkUrl = tool.apkUrl;
     try {
-      const opened = window.open(apkUrl, '_blank', 'noopener,noreferrer');
-      if (!opened) window.location.href = apkUrl;
+      const opened = openInExternalChrome(tool.apkUrl);
+      if (!opened) throw new Error('Chrome redirect could not be created.');
     } catch {
-      toast(`Could not start the ${tool.name} download. Please try again.`, 'error');
+      toast(`Could not open Chrome for ${tool.name}. Please try again.`, 'error');
     }
   };
 
