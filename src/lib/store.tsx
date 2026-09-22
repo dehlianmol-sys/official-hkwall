@@ -186,14 +186,15 @@ function mapGateway(r: GatewayRow): PaymentGateway {
 }
 
 function mapBanner(r: BannerRow): Banner {
-  const isLegacyTutorial = r.banner_type === 'notice' && r.title === '__tutorial__';
+  const isSubmitMarker = r.title === '__submit_tutorial__';
+  const isLegacyTutorial = r.banner_type === 'notice' && (r.title === '__tutorial__' || isSubmitMarker);
   const rawType = isLegacyTutorial ? 'tutorial' : (r.banner_type ?? 'normal');
   const bannerType: Banner['bannerType'] = rawType === 'notice' || rawType === 'tutorial' ? rawType : 'normal';
   return {
     id: r.id,
     url: r.url,
     bannerType,
-    title: isLegacyTutorial ? '' : (r.title ?? ''),
+    title: isSubmitMarker ? '__submit_tutorial__' : isLegacyTutorial ? '' : (r.title ?? ''),
     noticeText: r.notice_text ?? '',
     sortOrder: Number(r.sort_order ?? 0),
     createdAt: r.created_at,
