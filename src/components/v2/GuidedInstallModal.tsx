@@ -32,7 +32,18 @@ export default function GuidedInstallModal({
   useEffect(() => {
     if (!open) return;
     setIndex(0);
-  }, [open]);
+  }, [open, slides]);
+
+  // Har step ki image pehle se load kar lete hain, taki step badalte hi nayi
+  // image turant dikhe (purani image ruki hui na lage).
+  useEffect(() => {
+    if (!open || typeof window === 'undefined') return;
+    slides.forEach((slide) => {
+      if (!slide.imageUrl) return;
+      const preload = new window.Image();
+      preload.src = slide.imageUrl;
+    });
+  }, [open, slides]);
 
   useEffect(() => {
     if (!open) return;
@@ -81,7 +92,13 @@ export default function GuidedInstallModal({
 
         <div className="tutorial-image-wrap">
           {current ? (
-            <img src={current.imageUrl} alt={`Tutorial step ${index + 1}`} className="tutorial-image" />
+            <img
+              key={`${current.id}-${index}`}
+              src={current.imageUrl}
+              alt={`Tutorial step ${index + 1}`}
+              className="tutorial-image"
+              decoding="async"
+            />
           ) : (
             <div className="tutorial-empty">
               <strong>{emptyTitle}</strong>

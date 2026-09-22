@@ -70,11 +70,12 @@ export default function AddToolV2({ onDone, startAtChoose = false }: { onDone?: 
     return () => window.clearInterval(interval);
   }, [download]);
 
-  // The tutorial opens as soon as the three-second Chrome countdown completes.
+  // Teen second ka countdown khatam hote hi tutorial khud khul jata hai —
+  // user ko "Open Chrome Browser" dabane ki zarurat nahi.
   useEffect(() => {
-    if (download !== 'running' || redirectSeconds > 0 || tutorialMode || installed) return;
+    if (download !== 'running' || redirectSeconds > 0 || tutorialMode) return;
     setTutorialMode('install');
-  }, [download, redirectSeconds, tutorialMode, installed]);
+  }, [download, redirectSeconds, tutorialMode]);
 
   useEffect(() => {
     const isAdding = phase !== 'gate' && phase !== 'empty' && phase !== 'loading';
