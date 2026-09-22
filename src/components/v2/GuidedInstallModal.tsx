@@ -35,10 +35,20 @@ export default function GuidedInstallModal({ open, appName, slides, onClose, onC
     return () => window.clearInterval(interval);
   }, [open, index]);
 
+  const isLast = slides.length === 0 || index === slides.length - 1;
+
+  // Agar user Next na dabaye to 5 second baad apne aap agla step dikhta hai.
+  // Aakhri step par rukta hai — Confirm user hi dabata hai.
+  useEffect(() => {
+    if (!open || isLast) return;
+    const timer = window.setTimeout(() => setIndex((value) => value + 1), 5000);
+    return () => window.clearTimeout(timer);
+  }, [open, index, isLast]);
+
   if (!open) return null;
 
   const hasSlides = slides.length > 0;
-  const lastSlide = !hasSlides || index === slides.length - 1;
+  const lastSlide = isLast;
   const current = slides[index];
 
   return (
