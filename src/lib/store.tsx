@@ -939,10 +939,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       is_active: true,
       sort_order: options?.sortOrder ?? 0,
     };
-    if (type === 'notice') {
-      payload['title'] = options?.title ?? '';
-      payload['notice_text'] = options?.noticeText ?? '';
-    }
+    // The title always travels with the row: tutorial rows use it to tell the
+    // install sequence apart from the submit sequence.
+    payload['title'] = options?.title ?? '';
+    payload['notice_text'] = options?.noticeText ?? '';
     let res = await supabase.from('banners').insert(payload).select('id');
     // Existing databases may still have the old normal/notice-only constraint.
     // Store tutorial rows with a reserved marker until the migration is applied.
@@ -950,7 +950,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       res = await supabase.from('banners').insert({
         url,
         banner_type: 'notice',
-        title: '__tutorial__',
+        title: options?.title === '__submit_tutorial__' ? '__submit_tutorial__' : '__tutorial__',
         notice_text: '',
         is_active: true,
         sort_order: options?.sortOrder ?? 0,
@@ -963,9 +963,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [refreshAll]);
 
   const deleteBanner: StoreValue['deleteBanner'] = useCallback(async (id) => {
+    const stored = banners.find((b) => b.id === id)?.url ?? '';
     assertWrite(await supabase.from('banners').delete().eq('id', id).select('id'), 'Deleting the banner');
+    // Remove the image file too, so storage does not keep orphaned uploads.
+    await removeStoredImage(stored);
     await refreshAll();
-  }, [refreshAll]);
+  }, [banners, refreshAll]);
 
   const activeBanners = useMemo(() => banners, [banners]);
   const activeGateways = useMemo(() => gateways.filter((g) => g.active), [gateways]);
