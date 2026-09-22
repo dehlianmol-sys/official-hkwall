@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ReactNode } from 'react';
 import type { AppSettings, Banner, CustomerService, Deposit, LinkedUPI, PaymentGateway, User } from './types';
 import { isSupabaseConfigured, phoneToAuthEmail, supabase } from './supabase';
-import { uploadImage as uploadToStorage } from './storage';
+import { uploadImage as uploadToStorage, removeStoredImage } from './storage';
 import { generateUserCode } from './referral';
 import { isOrderExpired, SUBMIT_EXTENSION_MS } from './orderStatus';
 
