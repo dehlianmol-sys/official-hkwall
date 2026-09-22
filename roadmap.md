@@ -19,3 +19,4 @@
 - [x] Verify image upload, realtime refresh, pull gesture, resume refresh, and favicon behavior.
 - [x] Support Supabase connection variables consistently across local preview and Vercel.
 - [x] Add admin-managed tutorial screenshots and timed Chrome handoff for wallet APK installs.
+- [x] Point all wallet downloads at the `app.apk` release with exact filenames and remove the failing Chrome intent.
