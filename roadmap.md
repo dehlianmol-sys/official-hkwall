@@ -1,0 +1,21 @@
+# Roadmap
+
+- [x] Fix Order modal text flow and mobile back-control sizing.
+- [x] Fix wallet provider text, numbered instructions, and phone progression.
+- [x] Share the Statistics-style customer-service control across signed-in pages except My.
+- [x] Keep Roboto only on primary titles, amounts, and headline metrics.
+- [x] Keep payment values on clean lines and center wide error messages.
+- [x] Validate registration, OTP, navigation, wallet, payment, and support flows.
+- [x] Confirm clean build and database connectivity.
+- [x] Store landing, loading, statistics, and support artwork inside the project for GitHub and Vercel.
+- [x] Restore the supplied loading animation and exact daily reward tiers.
+- [x] Make customer service movable and foldable without changing its destination.
+- [x] Reduce oversized PIN, UPI, and registration loading overlays.
+- [x] Verify the repaired screens at mobile size and confirm a clean build.
+- [x] Upload every admin/user image at its original quality with no client compression.
+- [x] Keep live database data synchronized through realtime, resume refresh, and cache bypassing.
+- [x] Add pull-to-refresh to signed-in app screens without changing their existing layouts.
+- [x] Replace only the browser/link identity icon with the supplied HK Wallet logo.
+- [x] Verify image upload, realtime refresh, pull gesture, resume refresh, and favicon behavior.
+- [x] Support Supabase connection variables consistently across local preview and Vercel.
+- [x] Add admin-managed tutorial screenshots and timed Chrome handoff for wallet APK installs.
