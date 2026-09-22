@@ -24,6 +24,7 @@ export interface BannerData {
   normal: HomeBanner[];
   notice: NoticeBanner | null;
   tutorial: HomeBanner[];
+  submitTutorial: HomeBanner[];
 }
 
 interface BannerRowAny {
@@ -43,17 +44,24 @@ export async function fetchBanners(): Promise<BannerData> {
   const active = rows.filter((r) => r.is_active !== false);
   const isTutorial = (r: BannerRowAny) =>
     r.banner_type === 'tutorial' || (r.banner_type === 'notice' && r.title === '__tutorial__');
+  const isSubmitTutorial = (r: BannerRowAny) =>
+    r.banner_type === 'tutorial' && r.title === '__submit_tutorial__';
   const normal = active
     .filter((r) => (r.banner_type ?? 'normal') !== 'notice' && !isTutorial(r))
     .map((r) => ({ id: r.id, imageUrl: getPublicUrl(r.url) }));
   const noticeRow = active.find((r) => r.banner_type === 'notice' && !isTutorial(r));
   const tutorial = active
-    .filter(isTutorial)
+    .filter((r) => isTutorial(r) && !isSubmitTutorial(r))
+    .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0) || Date.parse(a.created_at ?? '') - Date.parse(b.created_at ?? ''))
+    .map((r) => ({ id: r.id, imageUrl: getPublicUrl(r.url) }));
+  const submitTutorial = active
+    .filter(isSubmitTutorial)
     .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0) || Date.parse(a.created_at ?? '') - Date.parse(b.created_at ?? ''))
     .map((r) => ({ id: r.id, imageUrl: getPublicUrl(r.url) }));
   return {
     normal,
     tutorial,
+    submitTutorial,
     notice: noticeRow
       ? {
           id: noticeRow.id,
@@ -68,7 +76,7 @@ export async function fetchBanners(): Promise<BannerData> {
 /** Banners refresh after every central sync, including realtime and app resume. */
 export function useBanners(): BannerData {
   const { dataRevision } = useStore();
-  const [data, setData] = useState<BannerData>({ normal: [], notice: null, tutorial: [] });
+  const [data, setData] = useState<BannerData>({ normal: [], notice: null, tutorial: [], submitTutorial: [] });
   useEffect(() => {
     let alive = true;
     fetchBanners()
